@@ -17,12 +17,21 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce;
     public float maxDoubleJumps;
     TakeawayCounters takeawayCounters = new TakeawayCounters();
+    Animator animator;
+    public bool canMove = true;
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
+
     private void Update()
     {
         Vector2 moveForce = Vector2.zero;
-
-        if (Input.GetKeyDown(KeyCode.W))
+        bool runAnim = false;
+        if (Input.GetKeyDown(KeyCode.W) && canMove)
         {
+
             if (takeawayCounters.jumpCount <= maxDoubleJumps)
             {
                 moveForce.y += jumpForce;
@@ -31,22 +40,31 @@ public class PlayerMovement : MonoBehaviour
                 takeawayCounters.jumpCount++;
             }
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) && canMove)
         {
+            runAnim = true;
+
             moveForce.x -= speed;          
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
             //velocity.y = 0;
-            takeawayCounters.jumpCount--;
+            //takeawayCounters.jumpCount--;
 
-            if (takeawayCounters.jumpCount < 0)
-                takeawayCounters.jumpCount = 0;
+            //if (takeawayCounters.jumpCount < 0)
+            //    takeawayCounters.jumpCount = 0;
+
+            takeawayCounters.Takeaway();
+            animator.SetTrigger("stop");
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) && canMove)
         {
+            runAnim = true;
+
             moveForce.x += speed;
         }
+
+        animator.SetBool("running", runAnim);
 
         addForce(moveForce);
     }
@@ -66,6 +84,8 @@ public class PlayerMovement : MonoBehaviour
     void move(Vector2 _forceVec)
     {
         Vector2 position = transform.position;
+
+        velocity = takeawayCounters.velocity;
 
         _forceVec = applyFriction(_forceVec);
 
@@ -97,6 +117,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         transform.position = position;
+
+        takeawayCounters.velocity = velocity;
 
         force = Vector2.zero;
     }
@@ -152,6 +174,15 @@ public class PlayerMovement : MonoBehaviour
             takeawayCounters.Takeaway();
         }
     }
+
+    public void toggleMovement(int _canMove)//bool _canMove)
+    {
+        Debug.Log(_canMove);
+
+        canMove = (_canMove > 0);
+
+        Debug.Log(canMove);
+    }
 }
 
 struct RaycastResult
@@ -166,6 +197,7 @@ class TakeawayCounters
 {
     public float jumpCount;
     public float dashCount;
+    public Vector2 velocity;
 
     public TakeawayCounters()
     {
@@ -176,7 +208,18 @@ class TakeawayCounters
     public void Takeaway()
     {
         jumpCount--;
+        if (jumpCount < 0)
+            jumpCount = 0;
+
         dashCount--;
+
+        if (dashCount < 0)
+            dashCount = 0;
+
+        velocity.x = 0.0f;
+
+        if(velocity.y < 0)
+            velocity.y = 0;
     }
 }
 
