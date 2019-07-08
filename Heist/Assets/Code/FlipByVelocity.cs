@@ -17,10 +17,13 @@ public class FlipByVelocity : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float rotation = (movementScript.velocity.x < 0.0f) ? 180.0f :
-                        (movementScript.velocity.x > 0.0f) ? 0.0f :
+        if (movementScript.physics.velocity.x > 0.2f || movementScript.physics.velocity.x < -0.2f)
+        {
+            float rotation = (movementScript.physics.velocity.x < 0.0f) ? 180.0f :
+                        (movementScript.physics.velocity.x > 0.0f) ? 0.0f :
                         transform.rotation.eulerAngles.y;
 
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, rotation, transform.rotation.eulerAngles.z);
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, rotation, transform.rotation.eulerAngles.z);
+        }
     }
 }

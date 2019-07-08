@@ -1,0 +1,7 @@
+Goals for this:
+-Tight character controller
+-Input system
+
+[Stretch]
+-Hitstun and anim freeze on hits
+-Combo tool completion

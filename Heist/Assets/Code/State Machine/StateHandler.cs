@@ -2,14 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Quick overview of how this works
+//StateHandlers will switch between custom states based on input/game state
+//When a state is switched it calls onExit on the previous one (unless specified otherwise), then init and onEnter for the new state
+//Update is called every frame in the state handler's update loop. If the update function returns a CustomState the handler switches to the state that was returned
+//If null is returned nothing happens and the currentState continues to loop
 
-public class State
+public class CustomState
 {
-    protected State nextState = null;
+    protected CustomState nextState = null;
 
-    public virtual void onEnter(StateHandler _handler) { }
+    public virtual void init(StateHandler _handler) { }
 
-    public virtual State update() { return nextState; }
+    public virtual void onEnter() { }
+
+    public virtual CustomState update() { return nextState; } //nextState defaults to null
+
+    public virtual void FixedUpdate() { }
 
     public virtual void onExit() { }
 }
@@ -17,14 +26,14 @@ public class State
 public class StateHandler : MonoBehaviour
 {
     public bool debugState;
-    public State currentState = null; // should be initialized differently depending on the handler
+    public CustomState currentState = null; // should be initialized differently depending on the handler
 	
 	// Update is called once per frame
 	protected virtual void Update ()
     {
         if (currentState != null)
         {
-            State nextState = currentState.update();
+            CustomState nextState = currentState.update();
 
             if (nextState != null)
             {
@@ -33,7 +42,15 @@ public class StateHandler : MonoBehaviour
         }
 	}
 
-    public void switchState(State _nextState, bool _shouldExit = true)
+    protected virtual void FixedUpdate()
+    {
+        if(currentState != null)
+        {
+            currentState.FixedUpdate();
+        }
+    }
+
+    public void switchState(CustomState _nextState, bool _shouldExit = true)
     {
         if(_shouldExit)
             if(currentState != null)
@@ -44,7 +61,9 @@ public class StateHandler : MonoBehaviour
         
         currentState = _nextState;
 
-        currentState.onEnter(this);
+        currentState.init(this);
+
+        currentState.onEnter();
     }
 
     public System.Type getStateType()
