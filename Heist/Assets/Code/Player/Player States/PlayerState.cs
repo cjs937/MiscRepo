@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class PlayerState : SubStateHandler
 {
-    protected PlayerMovement moveScript;
-    protected AnimationHandler animHandler;
+    public PlayerMovement moveScript;
+    public AnimationHandler animHandler;
+    public PlayerJump jumpScript;
 
     public override void init(StateHandler _handler)
     {
@@ -13,12 +14,26 @@ public class PlayerState : SubStateHandler
 
         moveScript = _handler.GetComponent<PlayerMovement>();
         animHandler = _handler.GetComponent<AnimationHandler>();
+        jumpScript = _handler.GetComponent<PlayerJump>();
     }
+
+    public virtual void handleMoveInput(float speed)
+    {
+        if (Input.GetKey(KeyCode.A))
+        {
+            moveScript.move(new Vector2(-1, 0), speed);
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            moveScript.move(new Vector2(1, 0), speed);
+        }
+    }
+
 }
 
 public class PlayerSubState : SubState
 {
-    PlayerState parentState;
+    public PlayerState parentState;
 
     public override void init(SubStateHandler _parentState)
     {

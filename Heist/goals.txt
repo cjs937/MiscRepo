@@ -1,7 +1,13 @@
 Goals for this:
 -Tight character controller
--Input system
+	-Actions:
+		-Move
+		-Jump
+		-Dash
+		-Crouch
 
+-Input system
+-Witch time style shader
 [Stretch]
 -Hitstun and anim freeze on hits
 -Combo tool completion

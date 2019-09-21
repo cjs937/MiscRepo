@@ -20,6 +20,13 @@ public class PlayerStateMoving : PlayerState
 
     void handleInput()
     {
+        if (!jumpScript.resetting && Input.GetKey(KeyCode.W))
+        {
+            nextState = new PlayerStateJumping();
+
+            return;
+        }
+
         if (Input.GetKey(KeyCode.A))
         {
             moveScript.move(new Vector2(-1, 0), moveScript.moveSpeed);

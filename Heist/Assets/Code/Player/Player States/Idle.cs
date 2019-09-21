@@ -30,5 +30,10 @@ public class PlayerStateIdle : PlayerState
         {
             nextState = new PlayerStateMoving();
         }
+
+        if(!jumpScript.resetting && Input.GetKey(KeyCode.W))
+        {
+            nextState = new PlayerStateJumping();
+        }
     }
 }
